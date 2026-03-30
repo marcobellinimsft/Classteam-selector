@@ -21,245 +21,110 @@
       padding: 18px 32px;
       text-align: center;
     }
-
-    header h1 {
-      font-size: 1.7rem;
-      color: #fff;
-      letter-spacing: 1px;
-    }
-
-    header p {
-      color: #b7a57a;
-      font-size: 0.9rem;
-      margin-top: 4px;
-      font-style: italic;
-    }
-
-    .uw-logo {
-      font-size: 2rem;
-      font-weight: 900;
-      color: #b7a57a;
-      margin-right: 12px;
-      vertical-align: middle;
-    }
+    header h1 { font-size: 1.7rem; color: #fff; letter-spacing: 1px; }
+    header p  { color: #b7a57a; font-size: 0.9rem; margin-top: 4px; font-style: italic; }
+    .uw-logo  { font-size: 2rem; font-weight: 900; color: #b7a57a; margin-right: 12px; vertical-align: middle; }
 
     .controls {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      padding: 16px;
-      background: #2d1a5e;
-      border-bottom: 2px solid #4b2e83;
+      display: flex; justify-content: center; gap: 12px;
+      padding: 16px; background: #2d1a5e; border-bottom: 2px solid #4b2e83;
     }
 
     button {
-      padding: 10px 28px;
-      font-size: 1rem;
-      font-weight: 700;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-      letter-spacing: 0.5px;
+      padding: 10px 28px; font-size: 1rem; font-weight: 700;
+      border: none; border-radius: 6px; cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.5px;
     }
+    button:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+    #assignBtn { background: #b7a57a; color: #1a0a3e; }
+    #assignBtn:hover:not(:disabled) { background: #d4c09a; transform: scale(1.03); }
+    #resetBtn  { background: transparent; color: #b7a57a; border: 2px solid #b7a57a; }
+    #resetBtn:hover:not(:disabled) { background: #b7a57a22; }
 
-    button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      transform: none !important;
-    }
+    .main { display: flex; gap: 16px; padding: 16px; align-items: flex-start; }
 
-    #assignBtn {
-      background: #b7a57a;
-      color: #1a0a3e;
-    }
-
-    #assignBtn:hover:not(:disabled) {
-      background: #d4c09a;
-      transform: scale(1.03);
-    }
-
-    #resetBtn {
-      background: transparent;
-      color: #b7a57a;
-      border: 2px solid #b7a57a;
-    }
-
-    #resetBtn:hover:not(:disabled) {
-      background: #b7a57a22;
-    }
-
-    .main {
-      display: flex;
-      gap: 16px;
-      padding: 16px;
-      align-items: flex-start;
-    }
-
-    /* ── Left panel ── */
+    /* Left roster */
     .roster-panel {
-      flex: 0 0 190px;
-      background: #2d1a5e;
-      border: 2px solid #4b2e83;
-      border-radius: 10px;
-      padding: 12px;
-      position: sticky;
-      top: 16px;
-      max-height: calc(100vh - 140px);
-      overflow-y: auto;
+      flex: 0 0 185px;
+      background: #2d1a5e; border: 2px solid #4b2e83; border-radius: 10px;
+      padding: 12px; position: sticky; top: 16px;
+      max-height: calc(100vh - 140px); overflow-y: auto;
     }
-
     .roster-panel h2 {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #b7a57a;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #4b2e83;
-      padding-bottom: 6px;
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px;
+      color: #b7a57a; margin-bottom: 10px;
+      border-bottom: 1px solid #4b2e83; padding-bottom: 6px;
     }
 
     .student-chip {
-      font-size: 0.78rem;
-      padding: 4px 7px;
-      border-radius: 4px;
-      margin-bottom: 4px;
-      background: #3d2470;
-      color: #e8dff8;
-      transition: opacity 0.4s, background 0.4s;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      position: relative;
+      font-size: 0.77rem; padding: 5px 8px; border-radius: 4px; margin-bottom: 4px;
+      background: #3d2470; color: #e8dff8;
+      transition: background 0.3s, opacity 0.3s, color 0.3s;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .student-chip.spotlight {
+      background: #b7a57a; color: #1a0a3e;
+      box-shadow: 0 0 12px #b7a57acc;
+    }
+    .student-chip.done {
+      opacity: 0.28; background: #231550; text-decoration: line-through;
     }
 
-    .student-chip.assigned {
-      opacity: 0.3;
-      background: #2a1855;
-    }
-
-    .student-chip.launching {
-      background: #b7a57a;
-      color: #1a0a3e;
-      opacity: 1;
-    }
-
-    /* ── Teams grid ── */
+    /* Teams grid */
     .teams-grid {
-      flex: 1;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
+      flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
     }
 
     .team-card {
-      background: #2d1a5e;
-      border: 2px solid #4b2e83;
-      border-radius: 10px;
-      overflow: hidden;
-      position: relative;
+      background: #2d1a5e; border: 2px solid #4b2e83;
+      border-radius: 10px; overflow: hidden; transition: border-color 0.3s, box-shadow 0.3s, opacity 0.5s;
     }
-
     .team-card.receiving {
       border-color: #b7a57a;
-      box-shadow: 0 0 16px #b7a57a55;
+      box-shadow: 0 0 20px #b7a57a66;
+    }
+    .team-card.full {
+      border-color: #b7a57a55; opacity: 0.65;
     }
 
     .team-header {
-      background: #4b2e83;
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      background: #4b2e83; padding: 8px 12px;
+      display: flex; align-items: center; justify-content: space-between;
     }
+    .team-name { font-weight: 700; font-size: 0.9rem; color: #b7a57a; }
+    .team-count { font-size: 0.72rem; color: #fff9; }
 
-    .team-header span {
-      font-weight: 700;
-      font-size: 0.9rem;
-      color: #b7a57a;
+    .full-badge {
+      font-size: 0.62rem; font-weight: 900; letter-spacing: 1px;
+      background: #b7a57a; color: #1a0a3e;
+      padding: 2px 7px; border-radius: 10px;
+      opacity: 0; transform: scale(0.5);
+      transition: opacity 0.5s, transform 0.5s;
     }
+    .full-badge.show { opacity: 1; transform: scale(1); }
 
-    .team-count {
-      font-size: 0.75rem;
-      color: #fff9;
-    }
-
-    .team-members {
-      padding: 8px;
-      min-height: 60px;
-    }
+    .team-members { padding: 8px; min-height: 55px; }
+    .empty-hint { color: #ffffff28; font-size: 0.72rem; text-align: center; padding: 14px 0; }
 
     .member-tag {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      padding: 5px 8px;
-      border-radius: 5px;
-      margin-bottom: 5px;
-      background: #3d2470;
-      color: #e8dff8;
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.79rem; padding: 5px 8px; border-radius: 5px;
+      margin-bottom: 4px; background: #3d2470; color: #e8dff8;
     }
+    .member-tag .num { color: #b7a57a; font-weight: 800; font-size: 0.68rem; min-width: 14px; }
 
-    .member-tag .num {
-      color: #b7a57a;
-      font-weight: 700;
-      font-size: 0.7rem;
-      min-width: 14px;
-    }
-
-    .empty-hint {
-      color: #ffffff33;
-      font-size: 0.75rem;
-      text-align: center;
-      padding: 12px 0;
-    }
-
-    /* ── Flying token ── */
-    .flying-token {
-      position: fixed;
-      pointer-events: none;
-      z-index: 9999;
-      background: #b7a57a;
-      color: #1a0a3e;
-      font-size: 0.78rem;
-      font-weight: 700;
+    /* Flying pill */
+    .pill {
+      position: fixed; pointer-events: none; z-index: 9999;
+      background: #b7a57a; color: #1a0a3e;
       font-family: 'Segoe UI', Arial, sans-serif;
-      padding: 4px 10px;
-      border-radius: 20px;
+      font-size: 0.8rem; font-weight: 800;
+      padding: 5px 13px; border-radius: 20px;
       white-space: nowrap;
-      box-shadow: 0 4px 20px #b7a57a99;
-      transition: none;
-      will-change: transform, opacity;
+      box-shadow: 0 0 24px #b7a57acc, 0 4px 16px #0008;
     }
 
-    /* ── Full badge ── */
-    .full-badge {
-      font-size: 0.65rem;
-      font-weight: 800;
-      color: #1a0a3e;
-      background: #b7a57a;
-      padding: 2px 7px;
-      border-radius: 10px;
-      letter-spacing: 1px;
-      opacity: 0;
-      transform: scale(0.6);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-
-    .full-badge.badge-visible {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .team-card.team-full {
-      border-color: #b7a57a88;
-      opacity: 0.75;
-    }
-
-    /* scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-thumb { background: #4b2e83; border-radius: 3px; }
   </style>
 </head>
@@ -277,246 +142,233 @@
 
 <div class="main">
   <div class="roster-panel">
-    <h2>Students (43)</h2>
+    <h2>All Students (43)</h2>
     <div id="rosterList"></div>
   </div>
   <div class="teams-grid" id="teamsGrid"></div>
 </div>
 
 <script>
-  const students = [
-    "Alfredo Alamdar","Makylie Rae Bean","Isabelle Berariu","Sanjana Bonagiri",
-    "Dylan Brand","Andrew Brunson","Kha-vy Bui","Ari Cherny",
-    "Caden Dextur Chiong","Devon Minh Thy Dang","Alexia Drecin","Nikita Dubitski",
-    "Jade Ellis","Aaron Abe Gaceta","Noah Daniel Arnold Graetzer","Hailey Granvold",
-    "Kaylie Tiffany Heshmati","Jacob Troy Hilse","Tammy Ngoc Huynh","Handan Karakucuk",
-    "Kamron Korrell","Matthew Lee","Marlen Makramalla","Gabe Moreno",
-    "Fatimah Naji","Francis Stellano Neri","Benny Nguyen","Issabella Tran Nguyen",
-    "Will Khoa Nguyen","Yejun Noh","Kairi Maria Rojas","Iman Salhi",
-    "David Semaan","Paul Andrew Soper","Laura Summers","Xiaowei Sun",
-    "Quentin Swanson","Sing Well To","Mark Trofimchik","Yordanos Abebaw Tsegaye",
-    "Josh Winiarski","Maxsun Xaybanha","Uina Yamaguchi"
-  ];
+const STUDENTS = [
+  "Alfredo Alamdar","Makylie Rae Bean","Isabelle Berariu","Sanjana Bonagiri",
+  "Dylan Brand","Andrew Brunson","Kha-vy Bui","Ari Cherny",
+  "Caden Chiong","Devon Dang","Alexia Drecin","Nikita Dubitski",
+  "Jade Ellis","Aaron Gaceta","Noah Graetzer","Hailey Granvold",
+  "Kaylie Heshmati","Jacob Hilse","Tammy Huynh","Handan Karakucuk",
+  "Kamron Korrell","Matthew Lee","Marlen Makramalla","Gabe Moreno",
+  "Fatimah Naji","Francis Neri","Benny Nguyen","Issabella Nguyen",
+  "Will Nguyen","Yejun Noh","Kairi Rojas","Iman Salhi",
+  "David Semaan","Paul Soper","Laura Summers","Xiaowei Sun",
+  "Quentin Swanson","Sing Well To","Mark Trofimchik","Yordanos Tsegaye",
+  "Josh Winiarski","Maxsun Xaybanha","Uina Yamaguchi"
+];
 
-  const NUM_TEAMS = 8;
-  let chipEls = {};
-  let animating = false;
+const NUM_TEAMS = 8;
+let chips = {};   // name → DOM element
+let busy  = false;
 
-  // Build roster
-  const rosterList = document.getElementById('rosterList');
-  students.forEach(name => {
-    const div = document.createElement('div');
-    div.className = 'student-chip';
-    div.textContent = name;
-    div.id = 'chip-' + name.replace(/\s+/g, '-');
-    rosterList.appendChild(div);
-    chipEls[name] = div;
+// ── Build roster ──────────────────────────────────────────
+const rosterList = document.getElementById('rosterList');
+STUDENTS.forEach(name => {
+  const el = document.createElement('div');
+  el.className = 'student-chip';
+  el.textContent = name;
+  rosterList.appendChild(el);
+  chips[name] = el;
+});
+
+// ── Build team cards ──────────────────────────────────────
+const teamsGrid = document.getElementById('teamsGrid');
+for (let t = 1; t <= NUM_TEAMS; t++) {
+  const card = document.createElement('div');
+  card.className = 'team-card';
+  card.id = `card-${t}`;
+  card.innerHTML = `
+    <div class="team-header">
+      <span class="team-name">Team ${t}</span>
+      <span class="team-count" id="cnt-${t}">0 / 5</span>
+    </div>
+    <div class="team-members" id="members-${t}">
+      <div class="empty-hint">— awaiting —</div>
+    </div>`;
+  teamsGrid.appendChild(card);
+}
+
+// ── Helpers ───────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+}
+
+// ── Fly a pill from chip → target card ───────────────────
+function flyPill(name, chipEl, cardEl, onLand) {
+  const from = chipEl.getBoundingClientRect();
+  const to   = cardEl.getBoundingClientRect();
+
+  const x0 = from.right - 10;                    // leave from right edge of chip
+  const y0 = from.top + from.height / 2;
+  const x1 = to.left + 20;                       // land at left edge of card
+  const y1 = to.top  + to.scrollHeight - 30;
+
+  // Arc: control point is ABOVE the midpoint — clean left-to-right upward curve
+  const mx = (x0 + x1) / 2;
+  const my = Math.min(y0, y1) - 180;
+
+  const pill = document.createElement('div');
+  pill.className = 'pill';
+  pill.textContent = name;
+  pill.style.left = x0 + 'px';
+  pill.style.top  = y0 + 'px';
+  document.body.appendChild(pill);
+
+  const DURATION = 1500;
+  const t0 = performance.now();
+
+  function frame(now) {
+    const raw = Math.min((now - t0) / DURATION, 1);
+    const t   = easeInOutCubic(raw);
+
+    // Quadratic bezier: P = (1-t)²·P0 + 2(1-t)t·M + t²·P1
+    const bx = (1-t)*(1-t)*x0 + 2*(1-t)*t*mx + t*t*x1;
+    const by = (1-t)*(1-t)*y0 + 2*(1-t)*t*my + t*t*y1;
+
+    // Grow in first half, shrink in second half
+    const scale = 1 + 0.35 * Math.sin(Math.PI * t);
+
+    pill.style.transform = `translate(${bx - x0}px, ${by - y0}px) scale(${scale})`;
+    pill.style.opacity   = raw > 0.78 ? String(1 - (raw - 0.78) / 0.22) : '1';
+
+    if (raw < 1) {
+      requestAnimationFrame(frame);
+    } else {
+      pill.remove();
+      onLand();
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+// ── Main assign logic ─────────────────────────────────────
+function assign() {
+  if (busy) return;
+  busy = true;
+  document.getElementById('assignBtn').disabled = true;
+  document.getElementById('resetBtn').disabled  = true;
+
+  resetVisuals();
+
+  // 43 students, 8 teams → randomly pick 3 teams to have 6, rest get 5
+  const caps = new Array(NUM_TEAMS).fill(5);
+  shuffle([0,1,2,3,4,5,6,7]).slice(0, 3).forEach(i => caps[i] = 6);
+
+  const teamRosters = Array.from({length: NUM_TEAMS}, () => []);
+
+  // Assign each shuffled student to a PURELY random open team
+  const shuffledStudents = shuffle(STUDENTS);
+  const sequence = shuffledStudents.map(name => {
+    // All teams that still have room
+    const open = teamRosters
+      .map((r, i) => i)
+      .filter(i => teamRosters[i].length < caps[i]);
+
+    // Pick one completely at random (no weighting)
+    const chosen = open[Math.floor(Math.random() * open.length)];
+    teamRosters[chosen].push(name);
+    return { name, teamIdx: chosen };
   });
 
-  // Build team cards
-  const teamsGrid = document.getElementById('teamsGrid');
-  for (let i = 1; i <= NUM_TEAMS; i++) {
-    const card = document.createElement('div');
-    card.className = 'team-card';
-    card.innerHTML = `
-      <div class="team-header">
-        <span>Team ${i}</span>
-        <span class="team-count" id="count-${i}">0 members</span>
-      </div>
-      <div class="team-members" id="team-${i}">
-        <div class="empty-hint">— awaiting assignment —</div>
-      </div>`;
-    teamsGrid.appendChild(card);
-  }
+  // Launch one at a time
+  let idx = 0;
+  const SPOTLIGHT = 900;   // ms the chip glows gold before launching
+  const AFTER_LAND = 500;  // ms pause after landing before next launch
 
-  function shuffle(arr) {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
-
-  // Easing: ease-in-out cubic
-  function easeInOut(t) {
-    return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-  }
-
-  function flyToken(name, fromEl, toCardEl, onLand) {
-    const fromRect = fromEl.getBoundingClientRect();
-    const toRect   = toCardEl.getBoundingClientRect();
-
-    const startX = fromRect.left;
-    const startY = fromRect.top + fromRect.height / 2;
-
-    // Land near bottom of card
-    const endX = toRect.left + 16;
-    const endY = toRect.bottom - 20;
-
-    const token = document.createElement('div');
-    token.className = 'flying-token';
-    token.textContent = name;
-    document.body.appendChild(token);
-
-    token.style.left = startX + 'px';
-    token.style.top  = startY + 'px';
-    token.style.opacity = '1';
-
-    const duration = 1300;
-    const startTime = performance.now();
-
-    // Arc control point: swoop right then arc left
-    const cx = Math.max(startX, endX) + 200;
-    const cy = Math.min(startY, endY) - 140;
-
-    function step(now) {
-      const elapsed = now - startTime;
-      const raw = Math.min(elapsed / duration, 1);
-      const t = easeInOut(raw);
-
-      // Quadratic bezier
-      const x = (1-t)*(1-t)*startX + 2*(1-t)*t*cx + t*t*endX;
-      const y = (1-t)*(1-t)*startY + 2*(1-t)*t*cy + t*t*endY;
-
-      const scale = 1 + 0.25 * Math.sin(Math.PI * t);
-      token.style.transform = `translate(${x - startX}px, ${y - startY}px) scale(${scale})`;
-
-      // Fade out in last 20%
-      if (raw > 0.8) token.style.opacity = String(1 - (raw - 0.8) / 0.2);
-
-      if (raw < 1) {
-        requestAnimationFrame(step);
-      } else {
-        token.remove();
-        onLand();
-      }
+  function next() {
+    if (idx >= sequence.length) {
+      busy = false;
+      document.getElementById('assignBtn').disabled = false;
+      document.getElementById('resetBtn').disabled  = false;
+      return;
     }
 
-    requestAnimationFrame(step);
+    const { name, teamIdx } = sequence[idx++];
+    const teamNum  = teamIdx + 1;
+    const chipEl   = chips[name];
+    const cardEl   = document.getElementById(`card-${teamNum}`);
+    const membersEl = document.getElementById(`members-${teamNum}`);
+
+    // Scroll chip into view, then spotlight it
+    chipEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    chipEl.classList.add('spotlight');
+
+    setTimeout(() => {
+      chipEl.classList.remove('spotlight');
+      chipEl.classList.add('done');
+
+      // Clear placeholder
+      const hint = membersEl.querySelector('.empty-hint');
+      if (hint) hint.remove();
+
+      cardEl.classList.add('receiving');
+
+      flyPill(name, chipEl, cardEl, () => {
+        cardEl.classList.remove('receiving');
+
+        // Add member tag
+        const pos = teamRosters[teamIdx].indexOf(name) + 1;
+        const tag = document.createElement('div');
+        tag.className = 'member-tag';
+        tag.innerHTML = `<span class="num">${pos}</span>${name}`;
+        membersEl.appendChild(tag);
+
+        // Update count
+        const filled = membersEl.querySelectorAll('.member-tag').length;
+        const cap    = caps[teamIdx];
+        document.getElementById(`cnt-${teamNum}`).textContent = `${filled} / ${cap}`;
+
+        // If team is now full, show badge and dim card
+        if (filled === cap) {
+          const badge = document.createElement('span');
+          badge.className = 'full-badge';
+          badge.textContent = '✓ FULL';
+          cardEl.querySelector('.team-header').appendChild(badge);
+          requestAnimationFrame(() => badge.classList.add('show'));
+          cardEl.classList.add('full');
+        }
+
+        setTimeout(next, AFTER_LAND);
+      });
+
+    }, SPOTLIGHT);
   }
 
-  function assign() {
-    if (animating) return;
-    animating = true;
-    document.getElementById('assignBtn').disabled = true;
-    document.getElementById('resetBtn').disabled = true;
+  next();
+}
 
-    resetVisuals();
-
-    // Decide caps: 43 students, 8 teams → 3 teams get 6, 5 teams get 5
-    const teamCaps = Array(NUM_TEAMS).fill(5);
-    const sixTeams = shuffle([...Array(NUM_TEAMS).keys()]).slice(0, 3);
-    sixTeams.forEach(t => teamCaps[t] = 6);
-
-    const teamMembers = Array.from({ length: NUM_TEAMS }, () => []);
-
-    // Build sequence: shuffle students, each student randomly picks
-    // from teams that still have open slots
-    const shuffled = shuffle(students);
-    const sequence = [];
-    shuffled.forEach(name => {
-      // Find teams with space
-      const open = teamMembers
-        .map((m, t) => ({ t, space: teamCaps[t] - m.length }))
-        .filter(x => x.space > 0);
-      // Weighted random: teams with more space slightly more likely
-      const totalSpace = open.reduce((s, x) => s + x.space, 0);
-      let r = Math.random() * totalSpace;
-      let chosen = open[open.length - 1].t;
-      for (const x of open) {
-        r -= x.space;
-        if (r <= 0) { chosen = x.t; break; }
-      }
-      teamMembers[chosen].push(name);
-      sequence.push({ name, team: chosen + 1 });
-    });
-
-    let i = 0;
-    const SPOTLIGHT_HOLD = 1100; // ms chip glows golden before launch
-    const FLIGHT_PAUSE   = 550;  // ms pause after landing before next
-
-    function launchNext() {
-      if (i >= sequence.length) {
-        animating = false;
-        document.getElementById('assignBtn').disabled = false;
-        document.getElementById('resetBtn').disabled = false;
-        return;
-      }
-
-      const { name, team } = sequence[i];
-      i++;
-
-      const chip   = chipEls[name];
-      const cardEl = document.getElementById(`team-${team}`);
-      const teamEl = document.getElementById(`team-${team}`);
-
-      // Flash "FULL" badge if team just hit its cap after this member
-      const teamIdx = team - 1;
-      const willBeFull = teamMembers[teamIdx].indexOf(name) === teamCaps[teamIdx] - 1;
-
-      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      chip.classList.add('launching');
-
-      setTimeout(() => {
-        chip.classList.remove('launching');
-        chip.classList.add('assigned');
-
-        const hint = teamEl.querySelector('.empty-hint');
-        if (hint) hint.remove();
-
-        cardEl.classList.add('receiving');
-
-        flyToken(name, chip, cardEl, () => {
-          const memberIdx = teamMembers[teamIdx].indexOf(name) + 1;
-          const tag = document.createElement('div');
-          tag.className = 'member-tag';
-          tag.innerHTML = `<span class="num">${memberIdx}</span>${name}`;
-          teamEl.appendChild(tag);
-
-          const count = teamEl.querySelectorAll('.member-tag').length;
-          document.getElementById(`count-${team}`).textContent = `${count} members`;
-
-          cardEl.classList.remove('receiving');
-
-          // Flash FULL badge if team is now closed
-          if (willBeFull) {
-            const badge = document.createElement('div');
-            badge.className = 'full-badge';
-            badge.textContent = '✓ FULL';
-            cardEl.querySelector('.team-header').appendChild(badge);
-            cardEl.classList.add('team-full');
-            setTimeout(() => badge.classList.add('badge-visible'), 30);
-          }
-
-          setTimeout(launchNext, FLIGHT_PAUSE);
-        });
-
-      }, SPOTLIGHT_HOLD);
-    }
-
-    launchNext();
+// ── Reset ─────────────────────────────────────────────────
+function resetVisuals() {
+  for (let t = 1; t <= NUM_TEAMS; t++) {
+    document.getElementById(`members-${t}`).innerHTML = '<div class="empty-hint">— awaiting —</div>';
+    document.getElementById(`cnt-${t}`).textContent = '0 / 5';
+    const card = document.getElementById(`card-${t}`);
+    card.classList.remove('receiving', 'full');
+    card.querySelectorAll('.full-badge').forEach(b => b.remove());
   }
+  STUDENTS.forEach(n => chips[n].classList.remove('spotlight', 'done'));
+}
 
-  function resetVisuals() {
-    for (let i = 1; i <= NUM_TEAMS; i++) {
-      document.getElementById(`team-${i}`).innerHTML =
-        '<div class="empty-hint">— awaiting assignment —</div>';
-      document.getElementById(`count-${i}`).textContent = '0 members';
-      const card = document.getElementById(`team-${i}`).closest('.team-card');
-      card.classList.remove('receiving', 'team-full');
-      card.querySelectorAll('.full-badge').forEach(b => b.remove());
-    }
-    students.forEach(name => {
-      chipEls[name].classList.remove('assigned', 'launching');
-    });
-  }
-
-  document.getElementById('assignBtn').addEventListener('click', assign);
-  document.getElementById('resetBtn').addEventListener('click', () => {
-    if (animating) return;
-    resetVisuals();
-  });
+document.getElementById('assignBtn').addEventListener('click', assign);
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!busy) resetVisuals();
+});
 </script>
 </body>
 </html>
