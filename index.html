@@ -233,6 +233,30 @@
       will-change: transform, opacity;
     }
 
+    /* ── Full badge ── */
+    .full-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #1a0a3e;
+      background: #b7a57a;
+      padding: 2px 7px;
+      border-radius: 10px;
+      letter-spacing: 1px;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .full-badge.badge-visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .team-card.team-full {
+      border-color: #b7a57a88;
+      opacity: 0.75;
+    }
+
     /* scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -339,7 +363,7 @@
     token.style.top  = startY + 'px';
     token.style.opacity = '1';
 
-    const duration = 900;
+    const duration = 1300;
     const startTime = performance.now();
 
     // Arc control point: swoop right then arc left
@@ -378,29 +402,39 @@
     document.getElementById('assignBtn').disabled = true;
     document.getElementById('resetBtn').disabled = true;
 
-    // Reset visuals first
     resetVisuals();
 
-    const shuffled = shuffle(students);
-    // 43 / 8 → teams indexed 0-7, person idx%8 → team
-    const teams = Array.from({ length: NUM_TEAMS }, () => []);
-    shuffled.forEach((name, idx) => teams[idx % NUM_TEAMS].push(name));
+    // Decide caps: 43 students, 8 teams → 3 teams get 6, 5 teams get 5
+    const teamCaps = Array(NUM_TEAMS).fill(5);
+    const sixTeams = shuffle([...Array(NUM_TEAMS).keys()]).slice(0, 3);
+    sixTeams.forEach(t => teamCaps[t] = 6);
 
-    // Flatten into ordered sequence: assign round-robin order so names
-    // fly to teams 1,2,3,...8,1,2,... visually
+    const teamMembers = Array.from({ length: NUM_TEAMS }, () => []);
+
+    // Build sequence: shuffle students, each student randomly picks
+    // from teams that still have open slots
+    const shuffled = shuffle(students);
     const sequence = [];
-    const maxLen = Math.max(...teams.map(t => t.length));
-    for (let round = 0; round < maxLen; round++) {
-      for (let t = 0; t < NUM_TEAMS; t++) {
-        if (teams[t][round] !== undefined) {
-          sequence.push({ name: teams[t][round], team: t + 1 });
-        }
+    shuffled.forEach(name => {
+      // Find teams with space
+      const open = teamMembers
+        .map((m, t) => ({ t, space: teamCaps[t] - m.length }))
+        .filter(x => x.space > 0);
+      // Weighted random: teams with more space slightly more likely
+      const totalSpace = open.reduce((s, x) => s + x.space, 0);
+      let r = Math.random() * totalSpace;
+      let chosen = open[open.length - 1].t;
+      for (const x of open) {
+        r -= x.space;
+        if (r <= 0) { chosen = x.t; break; }
       }
-    }
+      teamMembers[chosen].push(name);
+      sequence.push({ name, team: chosen + 1 });
+    });
 
     let i = 0;
-    const SPOTLIGHT_HOLD = 600;  // ms chip glows before launch
-    const FLIGHT_PAUSE   = 300;  // ms after landing before next launch
+    const SPOTLIGHT_HOLD = 1100; // ms chip glows golden before launch
+    const FLIGHT_PAUSE   = 550;  // ms pause after landing before next
 
     function launchNext() {
       if (i >= sequence.length) {
@@ -417,10 +451,11 @@
       const cardEl = document.getElementById(`team-${team}`);
       const teamEl = document.getElementById(`team-${team}`);
 
-      // Scroll chip into view in the roster panel
-      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // Flash "FULL" badge if team just hit its cap after this member
+      const teamIdx = team - 1;
+      const willBeFull = teamMembers[teamIdx].indexOf(name) === teamCaps[teamIdx] - 1;
 
-      // Hold spotlight on chip before launch
+      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       chip.classList.add('launching');
 
       setTimeout(() => {
@@ -433,18 +468,27 @@
         cardEl.classList.add('receiving');
 
         flyToken(name, chip, cardEl, () => {
-          const memberIdx = teams[team - 1].indexOf(name) + 1;
+          const memberIdx = teamMembers[teamIdx].indexOf(name) + 1;
           const tag = document.createElement('div');
           tag.className = 'member-tag';
           tag.innerHTML = `<span class="num">${memberIdx}</span>${name}`;
           teamEl.appendChild(tag);
 
-          document.getElementById(`count-${team}`).textContent =
-            `${teamEl.querySelectorAll('.member-tag').length} members`;
+          const count = teamEl.querySelectorAll('.member-tag').length;
+          document.getElementById(`count-${team}`).textContent = `${count} members`;
 
           cardEl.classList.remove('receiving');
 
-          // Wait a beat, then launch the next person
+          // Flash FULL badge if team is now closed
+          if (willBeFull) {
+            const badge = document.createElement('div');
+            badge.className = 'full-badge';
+            badge.textContent = '✓ FULL';
+            cardEl.querySelector('.team-header').appendChild(badge);
+            cardEl.classList.add('team-full');
+            setTimeout(() => badge.classList.add('badge-visible'), 30);
+          }
+
           setTimeout(launchNext, FLIGHT_PAUSE);
         });
 
@@ -459,7 +503,9 @@
       document.getElementById(`team-${i}`).innerHTML =
         '<div class="empty-hint">— awaiting assignment —</div>';
       document.getElementById(`count-${i}`).textContent = '0 members';
-      document.getElementById(`team-${i}`).closest('.team-card').classList.remove('receiving');
+      const card = document.getElementById(`team-${i}`).closest('.team-card');
+      card.classList.remove('receiving', 'team-full');
+      card.querySelectorAll('.full-badge').forEach(b => b.remove());
     }
     students.forEach(name => {
       chipEls[name].classList.remove('assigned', 'launching');
