@@ -339,12 +339,12 @@
     token.style.top  = startY + 'px';
     token.style.opacity = '1';
 
-    const duration = 520;
+    const duration = 900;
     const startTime = performance.now();
 
     // Arc control point: swoop right then arc left
-    const cx = Math.max(startX, endX) + 120;
-    const cy = Math.min(startY, endY) - 60;
+    const cx = Math.max(startX, endX) + 200;
+    const cy = Math.min(startY, endY) - 140;
 
     function step(now) {
       const elapsed = now - startTime;
@@ -399,7 +399,8 @@
     }
 
     let i = 0;
-    const INTERVAL = 130; // ms between each launch
+    const SPOTLIGHT_HOLD = 600;  // ms chip glows before launch
+    const FLIGHT_PAUSE   = 300;  // ms after landing before next launch
 
     function launchNext() {
       if (i >= sequence.length) {
@@ -412,41 +413,42 @@
       const { name, team } = sequence[i];
       i++;
 
-      const chip    = chipEls[name];
-      const cardEl  = document.getElementById(`team-${team}`);
-      const teamEl  = document.getElementById(`team-${team}`);
+      const chip   = chipEls[name];
+      const cardEl = document.getElementById(`team-${team}`);
+      const teamEl = document.getElementById(`team-${team}`);
 
-      // Highlight chip briefly before launch
+      // Scroll chip into view in the roster panel
+      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      // Hold spotlight on chip before launch
       chip.classList.add('launching');
 
       setTimeout(() => {
         chip.classList.remove('launching');
         chip.classList.add('assigned');
 
-        // Remove empty hint once
         const hint = teamEl.querySelector('.empty-hint');
         if (hint) hint.remove();
 
-        // Highlight receiving card
         cardEl.classList.add('receiving');
 
         flyToken(name, chip, cardEl, () => {
-          // Drop the tag into the team
           const memberIdx = teams[team - 1].indexOf(name) + 1;
           const tag = document.createElement('div');
           tag.className = 'member-tag';
           tag.innerHTML = `<span class="num">${memberIdx}</span>${name}`;
           teamEl.appendChild(tag);
 
-          // Update count
           document.getElementById(`count-${team}`).textContent =
             `${teamEl.querySelectorAll('.member-tag').length} members`;
 
           cardEl.classList.remove('receiving');
+
+          // Wait a beat, then launch the next person
+          setTimeout(launchNext, FLIGHT_PAUSE);
         });
 
-        setTimeout(launchNext, INTERVAL);
-      }, 80);
+      }, SPOTLIGHT_HOLD);
     }
 
     launchNext();
