@@ -229,7 +229,7 @@ function flyPill(name, chipEl, cardEl, onLand) {
   pill.style.top  = y0 + 'px';
   document.body.appendChild(pill);
 
-  const DURATION = 750;
+  const DURATION = 500;
   const t0 = performance.now();
 
   function frame(now) {
@@ -288,8 +288,8 @@ function assign() {
 
   // Launch one at a time
   let idx = 0;
-  const SPOTLIGHT = 450;   // ms the chip glows gold before launching
-  const AFTER_LAND = 250;  // ms pause after landing before next launch
+  const SPOTLIGHT = 300;   // ms the chip glows gold before launching
+  const AFTER_LAND = 200;  // ms pause after landing before next launch
 
   function next() {
     if (idx >= sequence.length) {
