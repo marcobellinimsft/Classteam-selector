@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UW New Product Marketing Fun Team Selector</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #1a0a3e;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #4b2e83;
+      border-bottom: 4px solid #b7a57a;
+      padding: 18px 32px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.7rem;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      color: #b7a57a;
+      font-size: 0.9rem;
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    .uw-logo {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #b7a57a;
+      margin-right: 12px;
+      vertical-align: middle;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px;
+      background: #2d1a5e;
+      border-bottom: 2px solid #4b2e83;
+    }
+
+    button {
+      padding: 10px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+
+    #assignBtn {
+      background: #b7a57a;
+      color: #1a0a3e;
+    }
+
+    #assignBtn:hover {
+      background: #d4c09a;
+      transform: scale(1.03);
+    }
+
+    #resetBtn {
+      background: transparent;
+      color: #b7a57a;
+      border: 2px solid #b7a57a;
+    }
+
+    #resetBtn:hover {
+      background: #b7a57a22;
+    }
+
+    .main {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      align-items: flex-start;
+    }
+
+    /* ── Left panel ── */
+    .roster-panel {
+      flex: 0 0 190px;
+      background: #2d1a5e;
+      border: 2px solid #4b2e83;
+      border-radius: 10px;
+      padding: 12px;
+      position: sticky;
+      top: 16px;
+      max-height: calc(100vh - 140px);
+      overflow-y: auto;
+    }
+
+    .roster-panel h2 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #b7a57a;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #4b2e83;
+      padding-bottom: 6px;
+    }
+
+    .student-chip {
+      font-size: 0.78rem;
+      padding: 4px 7px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+      background: #3d2470;
+      color: #e8dff8;
+      transition: opacity 0.3s, text-decoration 0.3s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .student-chip.assigned {
+      opacity: 0.4;
+      text-decoration: line-through;
+    }
+
+    /* ── Teams grid ── */
+    .teams-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .team-card {
+      background: #2d1a5e;
+      border: 2px solid #4b2e83;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .team-header {
+      background: #4b2e83;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .team-header span {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #b7a57a;
+    }
+
+    .team-count {
+      font-size: 0.75rem;
+      color: #fff9;
+    }
+
+    .team-members {
+      padding: 8px;
+      min-height: 60px;
+    }
+
+    .member-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      padding: 5px 8px;
+      border-radius: 5px;
+      margin-bottom: 5px;
+      background: #3d2470;
+      color: #e8dff8;
+      animation: popIn 0.35s ease both;
+    }
+
+    .member-tag .num {
+      color: #b7a57a;
+      font-weight: 700;
+      font-size: 0.7rem;
+      min-width: 14px;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.8) translateY(6px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .empty-hint {
+      color: #ffffff33;
+      font-size: 0.75rem;
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #4b2e83; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1><span class="uw-logo">W</span>UW – New Product Marketing Fun Team Selector</h1>
+  <p>Foster School of Business &nbsp;|&nbsp; Marketing Cohort</p>
+</header>
+
+<div class="controls">
+  <button id="assignBtn">🎲 Randomly Assign Teams!</button>
+  <button id="resetBtn">↺ Reset</button>
+</div>
+
+<div class="main">
+
+  <!-- Left: roster -->
+  <div class="roster-panel">
+    <h2>Students (43)</h2>
+    <div id="rosterList"></div>
+  </div>
+
+  <!-- Right: teams -->
+  <div class="teams-grid" id="teamsGrid"></div>
+
+</div>
+
+<script>
+  const students = [
+    "Alfredo Alamdar",
+    "Makylie Rae Bean",
+    "Isabelle Berariu",
+    "Sanjana Bonagiri",
+    "Dylan Brand",
+    "Andrew Brunson",
+    "Kha-vy Bui",
+    "Ari Cherny",
+    "Caden Dextur Chiong",
+    "Devon Minh Thy Dang",
+    "Alexia Drecin",
+    "Nikita Dubitski",
+    "Jade Ellis",
+    "Aaron Abe Gaceta",
+    "Noah Daniel Arnold Graetzer",
+    "Hailey Granvold",
+    "Kaylie Tiffany Heshmati",
+    "Jacob Troy Hilse",
+    "Tammy Ngoc Huynh",
+    "Handan Karakucuk",
+    "Kamron Korrell",
+    "Matthew Lee",
+    "Marlen Makramalla",
+    "Gabe Moreno",
+    "Fatimah Naji",
+    "Francis Stellano Neri",
+    "Benny Nguyen",
+    "Issabella Tran Nguyen",
+    "Will Khoa Nguyen",
+    "Yejun Noh",
+    "Kairi Maria Rojas",
+    "Iman Salhi",
+    "David Semaan",
+    "Paul Andrew Soper",
+    "Laura Summers",
+    "Xiaowei Sun",
+    "Quentin Swanson",
+    "Sing Well To",
+    "Mark Trofimchik",
+    "Yordanos Abebaw Tsegaye",
+    "Josh Winiarski",
+    "Maxsun Xaybanha",
+    "Uina Yamaguchi"
+  ];
+
+  const NUM_TEAMS = 8;
+  let chipEls = {};
+
+  // Build roster list
+  const rosterList = document.getElementById('rosterList');
+  students.forEach(name => {
+    const div = document.createElement('div');
+    div.className = 'student-chip';
+    div.textContent = name;
+    div.id = 'chip-' + name.replace(/\s+/g, '-');
+    rosterList.appendChild(div);
+    chipEls[name] = div;
+  });
+
+  // Build team cards
+  const teamsGrid = document.getElementById('teamsGrid');
+  for (let i = 1; i <= NUM_TEAMS; i++) {
+    const card = document.createElement('div');
+    card.className = 'team-card';
+    card.innerHTML = `
+      <div class="team-header">
+        <span>Team ${i}</span>
+        <span class="team-count" id="count-${i}">0 members</span>
+      </div>
+      <div class="team-members" id="team-${i}">
+        <div class="empty-hint">— awaiting assignment —</div>
+      </div>`;
+    teamsGrid.appendChild(card);
+  }
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function assign() {
+    const shuffled = shuffle(students);
+    // 43 students, 8 teams → 3 teams get 6, 5 teams get 5
+    const teams = Array.from({ length: NUM_TEAMS }, () => []);
+    shuffled.forEach((name, idx) => teams[idx % NUM_TEAMS].push(name));
+
+    // Clear all teams
+    for (let i = 1; i <= NUM_TEAMS; i++) {
+      document.getElementById(`team-${i}`).innerHTML = '';
+    }
+
+    // Mark all chips unassigned first
+    students.forEach(name => chipEls[name].classList.remove('assigned'));
+
+    // Populate with staggered animation
+    let delay = 0;
+    for (let t = 0; t < NUM_TEAMS; t++) {
+      const teamEl = document.getElementById(`team-${t + 1}`);
+      const countEl = document.getElementById(`count-${t + 1}`);
+      countEl.textContent = `${teams[t].length} members`;
+
+      teams[t].forEach((name, idx) => {
+        setTimeout(() => {
+          const tag = document.createElement('div');
+          tag.className = 'member-tag';
+          tag.innerHTML = `<span class="num">${idx + 1}</span>${name}`;
+          teamEl.appendChild(tag);
+          chipEls[name].classList.add('assigned');
+        }, delay);
+        delay += 60;
+      });
+    }
+  }
+
+  function reset() {
+    for (let i = 1; i <= NUM_TEAMS; i++) {
+      document.getElementById(`team-${i}`).innerHTML =
+        '<div class="empty-hint">— awaiting assignment —</div>';
+      document.getElementById(`count-${i}`).textContent = '0 members';
+    }
+    students.forEach(name => chipEls[name].classList.remove('assigned'));
+  }
+
+  document.getElementById('assignBtn').addEventListener('click', assign);
+  document.getElementById('resetBtn').addEventListener('click', reset);
+</script>
+</body>
+</html>
