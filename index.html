@@ -12,6 +12,7 @@
       background: #1a0a3e;
       color: #fff;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     header {
@@ -62,12 +63,18 @@
       letter-spacing: 0.5px;
     }
 
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
     #assignBtn {
       background: #b7a57a;
       color: #1a0a3e;
     }
 
-    #assignBtn:hover {
+    #assignBtn:hover:not(:disabled) {
       background: #d4c09a;
       transform: scale(1.03);
     }
@@ -78,7 +85,7 @@
       border: 2px solid #b7a57a;
     }
 
-    #resetBtn:hover {
+    #resetBtn:hover:not(:disabled) {
       background: #b7a57a22;
     }
 
@@ -119,15 +126,22 @@
       margin-bottom: 4px;
       background: #3d2470;
       color: #e8dff8;
-      transition: opacity 0.3s, text-decoration 0.3s;
+      transition: opacity 0.4s, background 0.4s;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      position: relative;
     }
 
     .student-chip.assigned {
-      opacity: 0.4;
-      text-decoration: line-through;
+      opacity: 0.3;
+      background: #2a1855;
+    }
+
+    .student-chip.launching {
+      background: #b7a57a;
+      color: #1a0a3e;
+      opacity: 1;
     }
 
     /* ── Teams grid ── */
@@ -143,6 +157,12 @@
       border: 2px solid #4b2e83;
       border-radius: 10px;
       overflow: hidden;
+      position: relative;
+    }
+
+    .team-card.receiving {
+      border-color: #b7a57a;
+      box-shadow: 0 0 16px #b7a57a55;
     }
 
     .team-header {
@@ -179,7 +199,6 @@
       margin-bottom: 5px;
       background: #3d2470;
       color: #e8dff8;
-      animation: popIn 0.35s ease both;
     }
 
     .member-tag .num {
@@ -189,16 +208,29 @@
       min-width: 14px;
     }
 
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.8) translateY(6px); }
-      to   { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
     .empty-hint {
       color: #ffffff33;
       font-size: 0.75rem;
       text-align: center;
       padding: 12px 0;
+    }
+
+    /* ── Flying token ── */
+    .flying-token {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      background: #b7a57a;
+      color: #1a0a3e;
+      font-size: 0.78rem;
+      font-weight: 700;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px #b7a57a99;
+      transition: none;
+      will-change: transform, opacity;
     }
 
     /* scrollbar */
@@ -220,69 +252,33 @@
 </div>
 
 <div class="main">
-
-  <!-- Left: roster -->
   <div class="roster-panel">
     <h2>Students (43)</h2>
     <div id="rosterList"></div>
   </div>
-
-  <!-- Right: teams -->
   <div class="teams-grid" id="teamsGrid"></div>
-
 </div>
 
 <script>
   const students = [
-    "Alfredo Alamdar",
-    "Makylie Rae Bean",
-    "Isabelle Berariu",
-    "Sanjana Bonagiri",
-    "Dylan Brand",
-    "Andrew Brunson",
-    "Kha-vy Bui",
-    "Ari Cherny",
-    "Caden Dextur Chiong",
-    "Devon Minh Thy Dang",
-    "Alexia Drecin",
-    "Nikita Dubitski",
-    "Jade Ellis",
-    "Aaron Abe Gaceta",
-    "Noah Daniel Arnold Graetzer",
-    "Hailey Granvold",
-    "Kaylie Tiffany Heshmati",
-    "Jacob Troy Hilse",
-    "Tammy Ngoc Huynh",
-    "Handan Karakucuk",
-    "Kamron Korrell",
-    "Matthew Lee",
-    "Marlen Makramalla",
-    "Gabe Moreno",
-    "Fatimah Naji",
-    "Francis Stellano Neri",
-    "Benny Nguyen",
-    "Issabella Tran Nguyen",
-    "Will Khoa Nguyen",
-    "Yejun Noh",
-    "Kairi Maria Rojas",
-    "Iman Salhi",
-    "David Semaan",
-    "Paul Andrew Soper",
-    "Laura Summers",
-    "Xiaowei Sun",
-    "Quentin Swanson",
-    "Sing Well To",
-    "Mark Trofimchik",
-    "Yordanos Abebaw Tsegaye",
-    "Josh Winiarski",
-    "Maxsun Xaybanha",
-    "Uina Yamaguchi"
+    "Alfredo Alamdar","Makylie Rae Bean","Isabelle Berariu","Sanjana Bonagiri",
+    "Dylan Brand","Andrew Brunson","Kha-vy Bui","Ari Cherny",
+    "Caden Dextur Chiong","Devon Minh Thy Dang","Alexia Drecin","Nikita Dubitski",
+    "Jade Ellis","Aaron Abe Gaceta","Noah Daniel Arnold Graetzer","Hailey Granvold",
+    "Kaylie Tiffany Heshmati","Jacob Troy Hilse","Tammy Ngoc Huynh","Handan Karakucuk",
+    "Kamron Korrell","Matthew Lee","Marlen Makramalla","Gabe Moreno",
+    "Fatimah Naji","Francis Stellano Neri","Benny Nguyen","Issabella Tran Nguyen",
+    "Will Khoa Nguyen","Yejun Noh","Kairi Maria Rojas","Iman Salhi",
+    "David Semaan","Paul Andrew Soper","Laura Summers","Xiaowei Sun",
+    "Quentin Swanson","Sing Well To","Mark Trofimchik","Yordanos Abebaw Tsegaye",
+    "Josh Winiarski","Maxsun Xaybanha","Uina Yamaguchi"
   ];
 
   const NUM_TEAMS = 8;
   let chipEls = {};
+  let animating = false;
 
-  // Build roster list
+  // Build roster
   const rosterList = document.getElementById('rosterList');
   students.forEach(name => {
     const div = document.createElement('div');
@@ -318,51 +314,161 @@
     return a;
   }
 
+  // Easing: ease-in-out cubic
+  function easeInOut(t) {
+    return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  }
+
+  function flyToken(name, fromEl, toCardEl, onLand) {
+    const fromRect = fromEl.getBoundingClientRect();
+    const toRect   = toCardEl.getBoundingClientRect();
+
+    const startX = fromRect.left;
+    const startY = fromRect.top + fromRect.height / 2;
+
+    // Land near bottom of card
+    const endX = toRect.left + 16;
+    const endY = toRect.bottom - 20;
+
+    const token = document.createElement('div');
+    token.className = 'flying-token';
+    token.textContent = name;
+    document.body.appendChild(token);
+
+    token.style.left = startX + 'px';
+    token.style.top  = startY + 'px';
+    token.style.opacity = '1';
+
+    const duration = 520;
+    const startTime = performance.now();
+
+    // Arc control point: swoop right then arc left
+    const cx = Math.max(startX, endX) + 120;
+    const cy = Math.min(startY, endY) - 60;
+
+    function step(now) {
+      const elapsed = now - startTime;
+      const raw = Math.min(elapsed / duration, 1);
+      const t = easeInOut(raw);
+
+      // Quadratic bezier
+      const x = (1-t)*(1-t)*startX + 2*(1-t)*t*cx + t*t*endX;
+      const y = (1-t)*(1-t)*startY + 2*(1-t)*t*cy + t*t*endY;
+
+      const scale = 1 + 0.25 * Math.sin(Math.PI * t);
+      token.style.transform = `translate(${x - startX}px, ${y - startY}px) scale(${scale})`;
+
+      // Fade out in last 20%
+      if (raw > 0.8) token.style.opacity = String(1 - (raw - 0.8) / 0.2);
+
+      if (raw < 1) {
+        requestAnimationFrame(step);
+      } else {
+        token.remove();
+        onLand();
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
   function assign() {
+    if (animating) return;
+    animating = true;
+    document.getElementById('assignBtn').disabled = true;
+    document.getElementById('resetBtn').disabled = true;
+
+    // Reset visuals first
+    resetVisuals();
+
     const shuffled = shuffle(students);
-    // 43 students, 8 teams → 3 teams get 6, 5 teams get 5
+    // 43 / 8 → teams indexed 0-7, person idx%8 → team
     const teams = Array.from({ length: NUM_TEAMS }, () => []);
     shuffled.forEach((name, idx) => teams[idx % NUM_TEAMS].push(name));
 
-    // Clear all teams
-    for (let i = 1; i <= NUM_TEAMS; i++) {
-      document.getElementById(`team-${i}`).innerHTML = '';
+    // Flatten into ordered sequence: assign round-robin order so names
+    // fly to teams 1,2,3,...8,1,2,... visually
+    const sequence = [];
+    const maxLen = Math.max(...teams.map(t => t.length));
+    for (let round = 0; round < maxLen; round++) {
+      for (let t = 0; t < NUM_TEAMS; t++) {
+        if (teams[t][round] !== undefined) {
+          sequence.push({ name: teams[t][round], team: t + 1 });
+        }
+      }
     }
 
-    // Mark all chips unassigned first
-    students.forEach(name => chipEls[name].classList.remove('assigned'));
+    let i = 0;
+    const INTERVAL = 130; // ms between each launch
 
-    // Populate with staggered animation
-    let delay = 0;
-    for (let t = 0; t < NUM_TEAMS; t++) {
-      const teamEl = document.getElementById(`team-${t + 1}`);
-      const countEl = document.getElementById(`count-${t + 1}`);
-      countEl.textContent = `${teams[t].length} members`;
+    function launchNext() {
+      if (i >= sequence.length) {
+        animating = false;
+        document.getElementById('assignBtn').disabled = false;
+        document.getElementById('resetBtn').disabled = false;
+        return;
+      }
 
-      teams[t].forEach((name, idx) => {
-        setTimeout(() => {
+      const { name, team } = sequence[i];
+      i++;
+
+      const chip    = chipEls[name];
+      const cardEl  = document.getElementById(`team-${team}`);
+      const teamEl  = document.getElementById(`team-${team}`);
+
+      // Highlight chip briefly before launch
+      chip.classList.add('launching');
+
+      setTimeout(() => {
+        chip.classList.remove('launching');
+        chip.classList.add('assigned');
+
+        // Remove empty hint once
+        const hint = teamEl.querySelector('.empty-hint');
+        if (hint) hint.remove();
+
+        // Highlight receiving card
+        cardEl.classList.add('receiving');
+
+        flyToken(name, chip, cardEl, () => {
+          // Drop the tag into the team
+          const memberIdx = teams[team - 1].indexOf(name) + 1;
           const tag = document.createElement('div');
           tag.className = 'member-tag';
-          tag.innerHTML = `<span class="num">${idx + 1}</span>${name}`;
+          tag.innerHTML = `<span class="num">${memberIdx}</span>${name}`;
           teamEl.appendChild(tag);
-          chipEls[name].classList.add('assigned');
-        }, delay);
-        delay += 60;
-      });
+
+          // Update count
+          document.getElementById(`count-${team}`).textContent =
+            `${teamEl.querySelectorAll('.member-tag').length} members`;
+
+          cardEl.classList.remove('receiving');
+        });
+
+        setTimeout(launchNext, INTERVAL);
+      }, 80);
     }
+
+    launchNext();
   }
 
-  function reset() {
+  function resetVisuals() {
     for (let i = 1; i <= NUM_TEAMS; i++) {
       document.getElementById(`team-${i}`).innerHTML =
         '<div class="empty-hint">— awaiting assignment —</div>';
       document.getElementById(`count-${i}`).textContent = '0 members';
+      document.getElementById(`team-${i}`).closest('.team-card').classList.remove('receiving');
     }
-    students.forEach(name => chipEls[name].classList.remove('assigned'));
+    students.forEach(name => {
+      chipEls[name].classList.remove('assigned', 'launching');
+    });
   }
 
   document.getElementById('assignBtn').addEventListener('click', assign);
-  document.getElementById('resetBtn').addEventListener('click', reset);
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (animating) return;
+    resetVisuals();
+  });
 </script>
 </body>
 </html>
