@@ -126,6 +126,43 @@
       box-shadow: 0 0 24px #b7a57acc, 0 4px 16px #0008;
     }
 
+    /* ── Announcement popup ── */
+    #announce {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.7);
+      background: #4b2e83;
+      border: 3px solid #b7a57a;
+      border-radius: 16px;
+      padding: 18px 36px;
+      text-align: center;
+      z-index: 10000;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      box-shadow: 0 8px 48px #0009, 0 0 40px #b7a57a44;
+      min-width: 260px;
+    }
+    #announce.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    #announce .ann-name {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    #announce .ann-team {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #b7a57a;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-thumb { background: #4b2e83; border-radius: 3px; }
   </style>
@@ -141,6 +178,11 @@
   <button id="assignBtn">🎲 Randomly Assign Teams!</button>
   <button id="resetBtn">↺ Reset</button>
   <button id="downloadBtn" disabled>⬇ Download CSV</button>
+</div>
+
+<div id="announce">
+  <div class="ann-name" id="ann-name"></div>
+  <div class="ann-team" id="ann-team"></div>
 </div>
 
 <div class="main">
@@ -234,7 +276,7 @@ function flyPill(name, chipEl, cardEl, onLand) {
   pill.style.top  = y0 + 'px';
   document.body.appendChild(pill);
 
-  const DURATION = 250;
+  const DURATION = 500;  // flight duration → total ≈ 1s
   const t0 = performance.now();
 
   function frame(now) {
@@ -293,8 +335,8 @@ function assign() {
 
   // Launch one at a time
   let idx = 0;
-  const SPOTLIGHT = 150;
-  const AFTER_LAND = 100;
+  const SPOTLIGHT  = 350;  // popup visible before launch
+  const AFTER_LAND = 150;  // pause after landing
 
   function next() {
     if (idx >= sequence.length) {
@@ -313,21 +355,28 @@ function assign() {
     const cardEl   = document.getElementById(`card-${teamNum}`);
     const membersEl = document.getElementById(`members-${teamNum}`);
 
-    // Scroll chip into view, then spotlight it
+    // Scroll chip into view, spotlight it, show popup
     chipEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     chipEl.classList.add('spotlight');
+
+    const ann     = document.getElementById('announce');
+    const annName = document.getElementById('ann-name');
+    const annTeam = document.getElementById('ann-team');
+    annName.textContent = name;
+    annTeam.textContent = `→ Team ${teamNum}`;
+    ann.classList.add('show');
 
     setTimeout(() => {
       chipEl.classList.remove('spotlight');
       chipEl.classList.add('done');
 
-      // Clear placeholder
       const hint = membersEl.querySelector('.empty-hint');
       if (hint) hint.remove();
 
       cardEl.classList.add('receiving');
 
       flyPill(name, chipEl, cardEl, () => {
+        ann.classList.remove('show');
         cardEl.classList.remove('receiving');
 
         // Add member tag
@@ -371,6 +420,7 @@ function resetVisuals() {
     card.querySelectorAll('.full-badge').forEach(b => b.remove());
   }
   STUDENTS.forEach(n => chips[n].classList.remove('spotlight', 'done'));
+  document.getElementById('announce').classList.remove('show');
 }
 
 document.getElementById('assignBtn').addEventListener('click', assign);
