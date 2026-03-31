@@ -39,7 +39,9 @@
     #assignBtn { background: #b7a57a; color: #1a0a3e; }
     #assignBtn:hover:not(:disabled) { background: #d4c09a; transform: scale(1.03); }
     #resetBtn  { background: transparent; color: #b7a57a; border: 2px solid #b7a57a; }
-    #resetBtn:hover:not(:disabled) { background: #b7a57a22; }
+    #resetBtn:hover:not(:disabled)    { background: #b7a57a22; }
+    #downloadBtn { background: transparent; color: #7ec8a0; border: 2px solid #7ec8a0; }
+    #downloadBtn:hover:not(:disabled) { background: #7ec8a022; }
 
     .main { display: flex; gap: 16px; padding: 16px; align-items: flex-start; }
 
@@ -138,6 +140,7 @@
 <div class="controls">
   <button id="assignBtn">🎲 Randomly Assign Teams!</button>
   <button id="resetBtn">↺ Reset</button>
+  <button id="downloadBtn" disabled>⬇ Download CSV</button>
 </div>
 
 <div class="main">
@@ -164,8 +167,10 @@ const STUDENTS = [
 ];
 
 const NUM_TEAMS = 8;
-let chips = {};   // name → DOM element
+let chips = {};
 let busy  = false;
+let lastRosters = null;
+let lastCaps    = null;
 
 // ── Build roster ──────────────────────────────────────────
 const rosterList = document.getElementById('rosterList');
@@ -294,8 +299,11 @@ function assign() {
   function next() {
     if (idx >= sequence.length) {
       busy = false;
-      document.getElementById('assignBtn').disabled = false;
-      document.getElementById('resetBtn').disabled  = false;
+      document.getElementById('assignBtn').disabled  = false;
+      document.getElementById('resetBtn').disabled   = false;
+      document.getElementById('downloadBtn').disabled = false;
+      lastRosters = teamRosters;
+      lastCaps    = caps;
       return;
     }
 
@@ -366,8 +374,34 @@ function resetVisuals() {
 }
 
 document.getElementById('assignBtn').addEventListener('click', assign);
+
 document.getElementById('resetBtn').addEventListener('click', () => {
-  if (!busy) resetVisuals();
+  if (!busy) {
+    resetVisuals();
+    document.getElementById('downloadBtn').disabled = true;
+    lastRosters = null;
+  }
+});
+
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  if (!lastRosters) return;
+
+  const rows = [['Team', 'Member #', 'Name']];
+  lastRosters.forEach((roster, t) => {
+    roster.forEach((name, i) => {
+      rows.push([`Team ${t + 1}`, i + 1, name]);
+    });
+    rows.push(['', '', '']); // blank row between teams
+  });
+
+  const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'UW_Team_Assignments.csv';
+  a.click();
+  URL.revokeObjectURL(url);
 });
 </script>
 </body>
